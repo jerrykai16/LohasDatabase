@@ -62,6 +62,7 @@
         Header("location:readPage.php");
     }
     ?>
+    <a href="readPage.php">返回</a>
 </body>
 
 </html>
