@@ -90,6 +90,7 @@
         mysqli_close($link);
         ?>
     </form>
+    <a href="index.html">返回<a>
 </body>
 
 </html>

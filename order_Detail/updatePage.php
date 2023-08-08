@@ -26,13 +26,16 @@
             $tableColumn = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '訂單明細';";
             $tableValue = "SELECT * FROM 訂單明細 WHERE 訂單編號='" . $ODID . "' AND 產品編號=(" . $PID . ")";
             $columnNameArray = array();
-            if ($result1 = mysqli_query($link, $tableColumn) and $result2 = mysqli_query($link, $tableValue)) {
+            if ($result1 = mysqli_query($link, $tableColumn) and $tableValues = mysqli_query($link, $tableValue)) {
                 $rowNum = 0;
                 while ($row1 = mysqli_fetch_array($result1)) {
                     array_push($columnNameArray, $row1[0]);
                 }
                 //設定表標題
-                $row2 = mysqli_fetch_array($result2, MYSQLI_NUM);
+                
+                $ODvalue = mysqli_fetch_array($tableValues, MYSQLI_NUM);
+                //將表資料傳進陣列
+
                 $sql = "SELECT p.產品名稱 FROM 產品資料 p WHERE p.產品名稱!='" . $PName . "'";
                 echo "<div>產品名稱：<select name='product[]'>";
                 if ($PNResult = mysqli_query($link, $sql)) {
@@ -44,8 +47,8 @@
                 echo "</select>";
                 //設定產品名稱編號
             }
-            echo "<div>" . $columnNameArray[2] . "：<input type='text' value='" . $row2[2] . "' name='product[]'>" . "</div>";
-            echo "<div>" . $columnNameArray[3] . "：<input type='text' value='" . $row2[3] . "' name='product[]'>" . "</div>";
+            echo "<div>" . $columnNameArray[2] . "：<input type='text' value='" . $ODvalue[2] . "' name='product[]'>" . "</div>";
+            echo "<div>" . $columnNameArray[3] . "：<input type='text' value='" . $ODvalue[3] . "' name='product[]'>" . "</div>";
         }
         ?>
         <input type="submit" value="更新">
