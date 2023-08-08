@@ -14,7 +14,7 @@
     </style>
     <?php
     require_once("DB_conn.php");
-    $sql1 = "SELECT DISTINCT  訂單編號 FROM 訂單明細;";
+    session_start();
     ?>
     <script>
         function checkButton(ID) {
@@ -29,13 +29,25 @@
 
 <body>
     <form action="readPage.php" method="post">
-        <select name="productID">
+        <select name="orderDetailID">
             <?php
-            session_start();
-            if ($colResult = mysqli_query($link, $sql1)) {
-                foreach ($colResult as $key => $value) {
-                    foreach ($value as $value) {
-                        echo "<option value='" . $value . "'>" . $value . "</option>";
+            if(isset($_POST["orderDetailID"])){
+                $sql1 = "SELECT DISTINCT  訂單編號 FROM 訂單明細 WHERE 訂單編號!='".$_POST["orderDetailID"]."'";
+                echo "<option value='" . $_POST["orderDetailID"] . "'>" . $_POST["orderDetailID"] . "</option>";
+                if ($colResult = mysqli_query($link, $sql1)) {
+                    foreach ($colResult as $key => $value) {
+                        foreach ($value as $value) {
+                            echo "<option value='" . $value . "'>" . $value . "</option>";
+                        }
+                    }
+                }
+            }else{
+                $sql1 = "SELECT DISTINCT  訂單編號 FROM 訂單明細";
+                if ($colResult = mysqli_query($link, $sql1)) {
+                    foreach ($colResult as $key => $value) {
+                        foreach ($value as $value) {
+                            echo "<option value='" . $value . "'>" . $value . "</option>";
+                        }
                     }
                 }
             }
@@ -43,9 +55,9 @@
             <input type="submit" value="查詢">
         </select>
         <?php
-        if (isset($_POST["productID"])) {
-            $_SESSION["productID"] = $_POST["productID"];
-            $sql2 = "SELECT od.訂單編號,p.產品名稱,od.數量 FROM 訂單明細 od LEFT JOIN 產品資料 p ON od.產品編號=p.產品編號 WHERE od.`訂單編號`='" . $_POST["productID"] . "';";
+        if (isset($_POST["orderDetailID"])) {
+            $_SESSION["orderDetailID"] = $_POST["orderDetailID"];
+            $sql2 = "SELECT od.訂單編號,p.產品名稱,od.數量 FROM 訂單明細 od LEFT JOIN 產品資料 p ON od.產品編號=p.產品編號 WHERE od.`訂單編號`='" . $_POST["orderDetailID"] . "';";
             if ($result1 = mysqli_query($link, $sql2)) {
                 echo "<table>
                 <th>
@@ -66,7 +78,8 @@
                         "<td>" . $row1[0] . "</td>" .
                         "<td>" . $row1[1] . "</td>" .
                         "<td>" . $row1[2] . "</td>" .
-                        "<td><a style='color:blue;' onclick='checkButton(".$PID.")'>刪除</td>" .
+                        "<td><a onclick='checkButton(".$PID.")'>刪除</td>" .
+                        "<td><a href='updatePage.php?PID=".$PID."'>編輯</td>".
                         "</tr>";
                     $PID += 1;
                     array_push($_SESSION["PN"], $row1[1]);
@@ -77,9 +90,6 @@
         mysqli_close($link);
         ?>
     </form>
-    <a href="deletePage.php">刪除頁面</a><br>
-    <a href="insertPage.html">新增頁面</a><br>
-    <a href="updatePage.php">更新頁面</a>
 </body>
 
 </html>

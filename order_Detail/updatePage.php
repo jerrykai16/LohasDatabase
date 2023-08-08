@@ -8,56 +8,57 @@
     <?php
     session_start();
     require_once("DB_conn.php");
-    $sql1 = "SELECT ID FROM product;";
-    $sql2 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'product';";
+
+    if(isset($_GET["PID"])){
+        $_SESSION["PID"]=$_GET["PID"];
+    }
+    $PName = $_SESSION["PN"][$_SESSION["PID"]];
+    $PID = "SELECT p.產品編號 FROM 產品資料 p WHERE p.產品名稱='" . $PName . "'";
+
+    $ODID = $_SESSION["orderDetailID"];
     ?>
 </head>
 
 <body>
-    <form action="update.php" method="post">
-        <select name="productID">
-            <?php
-            if ($colResult = mysqli_query($link, $sql1)) {
-                foreach ($colResult as $key => $value) {
-                    foreach ($value as $value) {
-                        echo "<option value='" . $value . "'>" . $value . "</option>";
-                    }
-                }
-            }
-            ?>
-            <input type="submit" value="送出">
-        </select>
-        </form>
-    <form action="update.php" method="post">
+    <form action="updatePage.php" method="post">
         <?php
-        if (isset($_POST["productID"])) {
-            $_SESSION["productID"]=$_POST["productID"];
-            $sql3 = "select * from product where ID='" . $_SESSION["productID"] . "';";
-            if ($result1 = mysqli_query($link, $sql2) and $result2 = mysqli_query($link, $sql3)) {
-                $rowNum=0;
-                $row2=mysqli_fetch_array($result2, MYSQLI_NUM);
-                while($row1=mysqli_fetch_array($result1)){
-                    if($row1[0]!="ID"){
-                        echo "<div>".$row1[0]."：<input type='text' value='".$row2[$rowNum]."' name='product[]'>"."</div>";
-                    }
-                    $rowNum+=1;
+        if (isset($ODID)) {
+            $tableColumn = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '訂單明細';";
+            $tableValue = "SELECT * FROM 訂單明細 WHERE 訂單編號='" . $ODID . "' AND 產品編號=(" . $PID . ")";
+            $columnNameArray = array();
+            if ($result1 = mysqli_query($link, $tableColumn) and $result2 = mysqli_query($link, $tableValue)) {
+                $rowNum = 0;
+                while ($row1 = mysqli_fetch_array($result1)) {
+                    array_push($columnNameArray, $row1[0]);
                 }
+                //設定表標題
+                $row2 = mysqli_fetch_array($result2, MYSQLI_NUM);
+                $sql = "SELECT p.產品名稱 FROM 產品資料 p WHERE p.產品名稱!='" . $PName . "'";
+                echo "<div>產品名稱：<select name='product[]'>";
+                if ($PNResult = mysqli_query($link, $sql)) {
+                    echo "<option value='" . $PName . "'>" . $PName . "</option>";
+                    while ($value = mysqli_fetch_array($PNResult)) {
+                        echo "<option value='" . $value[0] . "'>" . $value[0] . "</option>";
+                    }
+                }
+                echo "</select>";
+                //設定產品名稱編號
             }
+            echo "<div>" . $columnNameArray[2] . "：<input type='text' value='" . $row2[2] . "' name='product[]'>" . "</div>";
+            echo "<div>" . $columnNameArray[3] . "：<input type='text' value='" . $row2[3] . "' name='product[]'>" . "</div>";
         }
         ?>
         <input type="submit" value="更新">
     </form>
     <?php
-        if (isset($_POST["product"]) and isset($_SESSION["productID"])) {
-            $rowArray=$_POST["product"];
-            $sql3 = "update product SET `Attribute`='".$rowArray[0]."',`Price`='".$rowArray[1]."',`time`='".$rowArray[2]."' WHERE ID='".$_SESSION["productID"]."';";
-            if ($result1 = mysqli_query($link, $sql3)) {
-                echo "<div>更新成功</div>";
-            }
-        }
+    if (isset($_POST["product"]) and isset($ODID)) {
+        $finValue=$_POST["product"];
+        $sql = "update 訂單明細 SET 產品編號=(SELECT p.產品編號 FROM 產品資料 p WHERE p.產品名稱='".$finValue[0]."'),實際單價='".$finValue[1]."',數量='".$finValue[2]."' WHERE 訂單編號='".$ODID."' AND 產品編號=(".$PID.")";
+        mysqli_query($link, $sql);
         mysqli_close($link);
-        ?>
-    <a href="readPage.php">返回</a><br>
+        Header("location:readPage.php");
+    }
+    ?>
 </body>
 
 </html>
