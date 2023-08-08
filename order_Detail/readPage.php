@@ -8,7 +8,6 @@
     <?php
     require_once("DB_conn.php");
     $sql1 = "SELECT DISTINCT  訂單編號 FROM 訂單明細;";
-    $sql2 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '訂單明細';";
     ?>
 </head>
 
@@ -28,14 +27,29 @@
         </select>
         <?php
         if (isset($_POST["productID"])) {
-            $sql3 = "select * from product where ID='" . $_POST["productID"] . "';";
-            if ($result1 = mysqli_query($link, $sql2) and $result2 = mysqli_query($link, $sql3)) {
-                $rowNum=0;
-                $row2=mysqli_fetch_array($result2, MYSQLI_NUM);
-                while($row1=mysqli_fetch_array($result1)){
-                    echo "<div>".$row1[0]."：".$row2[$rowNum]."</div>";
-                    $rowNum+=1;
+            $sql2 = "SELECT od.訂單編號,p.產品名稱,od.數量 FROM 訂單明細 od LEFT JOIN 產品資料 p ON od.產品編號=p.產品編號 WHERE od.`訂單編號`='" . $_POST["productID"] . "';";
+            if ($result1 = mysqli_query($link, $sql2)) {
+                echo "<table>
+                <th>
+                    訂單編號
+                </th>
+                <th>
+                    產品名稱
+                </th>
+                <th>
+                    產品數量
+                </th>
+                ";
+                while ($row1 = mysqli_fetch_array($result1)) {
+                    echo
+                    "<tr>".
+                    "<td>" . $row1[0] . "</td>" .
+                    "<td>" . $row1[1] . "</td>" .
+                    "<td>" . $row1[2] . "</td>".
+                    "<td>" . $row1[2] . "</td>".
+                    "</tr>";
                 }
+                echo "</table>";
             }
         }
         mysqli_close($link);
