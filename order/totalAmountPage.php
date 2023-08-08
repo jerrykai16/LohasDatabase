@@ -17,6 +17,7 @@
     mysqli_close($link);
 ?>
 <body>
+    <h3>查詢員工訂單總金額</h1>
     <form method="post" action="read.php">
         員工編號:<select name="pId">
             <?php
