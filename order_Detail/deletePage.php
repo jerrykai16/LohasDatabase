@@ -1,42 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <?php
-    require_once("DB_conn.php");
-    $sql1 = "SELECT ID FROM product;";
-    ?>
-</head>
-
-<body>
-    <form action="delete.php" method="post">
-        <select name="productID">
-            <?php
-            if ($colResult = mysqli_query($link, $sql1)) {
-                foreach ($colResult as $key => $value) {
-                    foreach ($value as $value) {
-                        echo "<option value='" . $value . "'>" . $value . "</option>";
-                    }
-                }
-            }
-            ?>
-            <input type="submit" value="刪除">
-        </select>
-        <?php
-        if (isset($_POST["productID"])) {
-            $sql2 = "DELETE from product where ID='".$_POST["productID"]."';";
-            if ($result1 = mysqli_query($link, $sql2)) {
-                header("location:readPage.php");
-            }else{
-                echo "刪除失敗";
-            }
-        }
-        mysqli_close($link);
-        ?>
-    </form>
-</body>
-
-</html>
+<?php
+session_start();
+$deleteName = $_SESSION["PN"][$_GET["PID"]];
+require_once("DB_conn.php");
+$sql = "SELECT p.產品編號 FROM 產品資料 p WHERE p.產品名稱='" . $deleteName . "'";
+$PID = mysqli_fetch_array(mysqli_query($link, $sql))[0];
+$odID=$_SESSION["productID"];
+$sql="DELETE FROM 訂單明細 WHERE 訂單編號 ='".$odID."' AND 產品編號 ='".$PID."'";
+if(mysqli_query($link, $sql)){
+    Header("location:readPage.php");
+}
+?>
