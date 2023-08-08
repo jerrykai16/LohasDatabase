@@ -1,0 +1,82 @@
+		*{
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body{
+			background-color: #FFECC9;
+		}
+		.titleBox h1{
+			text-align: center;
+			background-color:#BD0000;
+			margin-bottom: 20px;
+			color:	white;
+		}
+		.aBox{
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 45px;
+			gap: 30px;
+		}
+		.aBox a{	
+			border-radius: 10px;
+			text-align: center;
+			padding: -20px;
+			background-color: #BD0000;
+			font-weight:bolder;
+			color:#FFECC9;
+			line-height: 45px;
+			font-size: 25px;
+			width: 80px;
+			line-height: 45px;
+			height: 45px;
+			display: inline-block;
+			text-decoration: none;
+
+		}
+		.aBox a:hover{
+			background-color: #FFECC9;
+			color:#BD0000;
+		}
+		.contentBox{
+			margin-top: 30px;
+			margin-right: auto;
+			margin-left: auto;
+			width: 400px;
+			height: 200px;
+			background-color: white;
+			border: 3px solid #BD0000;
+			padding: 10px;
+			text-align: center;
+		}
+		.contentBox input{
+			margin-top: 10px;
+			margin-right: 5px;
+			background-color: #BD0000;
+			font-weight:bolder;
+			border: 3px solid #BD0000;
+			color:#FFECC9;
+			border-radius: 10px;
+		}
+		h3{
+			margin-bottom: 10px;
+			color: #BD0000;
+		}
+		.JQ1{
+			display: none;
+		}
+		table,tr,th{			
+			margin-right: auto;
+			margin-left: auto;
+			text-align: center;
+		}
+		th{
+			color: #BD0000;
+		}
+		td,tr,th{
+		background-color:white;
+		border: 1px solid #BD0000;
+		padding: 3px;
+		}
